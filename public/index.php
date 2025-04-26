@@ -1,53 +1,96 @@
 <?php
-// Configuración
 require_once __DIR__ . '/../config/config.php';
-
-// Servicios
 require_once __DIR__ . '/../app/servicios/Database.php';
 require_once __DIR__ . '/../app/servicios/Notificacion.php';
 require_once __DIR__ . '/../app/servicios/NotificacionUrgente.php';
 require_once __DIR__ . '/../app/servicios/NotificacionInformativa.php';
 require_once __DIR__ . '/../app/servicios/NotificacionRecordatorio.php';
-
-// Controlador de Notificaciones
 require_once __DIR__ . '/../app/controlador/NotificacionControlador.php';
 
-// Clases de Venta
-require_once __DIR__ . '/../app/vista/IVenta.php';
-require_once __DIR__ . '/../app/modelo/Venta.php';
-require_once __DIR__ . '/../app/modelo/VentaDecorator.php';
-require_once __DIR__ . '/../app/modelo/Venta_Cliente.php';
-require_once __DIR__ . '/../app/modelo/Venta_Vendedor.php';
-require_once __DIR__ . '/../app/modelo/Venta_Pago.php';
-
-// Controlador de Venta
-require_once __DIR__ . '/../app/controlador/VentaControlador.php';
-
-use app\modelo\AbsNotificacion;
-use app\vista\INotificador;
 use app\servicios\Database;
+use app\controlador\NotificacionControlador;
 use app\servicios\NotificacionUrgente;
 use app\servicios\NotificacionInformativa;
 use app\servicios\NotificacionRecordatorio;
-use app\controlador\NotificacionControlador;
-use app\controlador\VentaControlador;
 
-// Probar conexión
 $db = Database::getConnection();
-echo "🚀 Conexión exitosa!<br><br>";
 
-// Ejemplos de uso de Notificaciones
-$urgente = new NotificacionControlador(new NotificacionUrgente());
-$urgente->notificar("¡Atención inmediata requerida!");
+// Captura de notificaciones desde las clases PHP
+$notificaciones = [];
 
-$informativa = new NotificacionControlador(new NotificacionInformativa());
-$informativa->notificar("Se realizará mantenimiento esta noche.");
+ob_start();
+(new NotificacionControlador(new NotificacionUrgente()))->notificar("¡Atención inmediata requerida!");
+$notificaciones[] = ob_get_clean();
 
-$recordatorio = new NotificacionControlador(new NotificacionRecordatorio());
-$recordatorio->notificar("No olvides enviar el reporte semanal.");
+ob_start();
+(new NotificacionControlador(new NotificacionInformativa()))->notificar("Hoy se actualiza el sistema.");
+$notificaciones[] = ob_get_clean();
 
-// Ejemplo de uso de Venta
-echo "<br>🚗 Procesando venta:<br>";
-$ventaControlador = new VentaControlador();
-$ventaControlador->realizarVenta();
+ob_start();
+(new NotificacionControlador(new NotificacionRecordatorio()))->notificar("Envía tu reporte semanal.");
+$notificaciones[] = ob_get_clean();
 ?>
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Catálogo de Autos</title>
+    <link rel="stylesheet" href="styles/catalogo.css">
+    <link rel="stylesheet" href="styles/notificaciones.css">
+</head>
+<body>
+    <header>
+        <h1>🚗 Prime - Wheels</h1>
+    </header>
+
+    <div class="catalogo">
+        <?php
+        $result = pg_query($db, "SELECT * FROM Auto WHERE Disponibilidad = true");
+        while ($row = pg_fetch_assoc($result)) {
+            echo '
+            <div class="card">
+                <img src="img/default-car.png" alt="Auto disponible">
+                <div class="info">
+                    <h2>Año ' . $row['anio'] . '</h2>
+                    <p><strong>Costo:</strong> $' . number_format($row['costo'], 2) . '</p>
+                    <p><strong>Capacidad:</strong> ' . $row['capacidad'] . ' personas</p>
+                    <p><strong>Cilindros:</strong> ' . $row['cilindros'] . '</p>
+                    <p><strong>Apartado:</strong> ' . ($row['apartado'] ? 'Sí' : 'No') . '</p>
+                    <form action="comprar.php" method="GET">
+                        <input type="hidden" name="id_auto" value="' . $row['id_auto'] . '">
+                        <button type="submit" class="btn-comprar">Comprar</button>
+                    </form>
+                </div>
+            </div>';
+        }
+        ?>
+    </div>
+
+    <div class="notificaciones" id="notificaciones"></div>
+
+    <script>
+    const mensajes = <?php echo json_encode($notificaciones); ?>;
+
+    function mostrarNotificacion() {
+        const indice = Math.floor(Math.random() * mensajes.length);
+        const contenedor = document.getElementById('notificaciones');
+
+        const div = document.createElement('div');
+        div.innerHTML = mensajes[indice];
+        contenedor.appendChild(div.firstChild);
+
+        // Eliminar la notificación después de unos segundos
+        setTimeout(() => {
+            const noti = contenedor.querySelector('.notificacion');
+            if (noti) noti.remove();
+        }, 8000);
+    }
+
+    // Mostrar una notificación aleatoria cada 10 segundos
+    setInterval(mostrarNotificacion, 8000);
+</script>
+
+</body>
+</html>

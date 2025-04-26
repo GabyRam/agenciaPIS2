@@ -3,6 +3,6 @@ namespace app\servicios;
 
 class NotificacionUrgente implements Notificacion {
     public function enviar(string $mensaje) {
-        echo "🔴 URGENTE: $mensaje<br>";
+        echo "<div class='notificacion urgente'>🔴 URGENTE: $mensaje</div>";
     }
 }

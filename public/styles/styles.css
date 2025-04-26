@@ -1,0 +1,28 @@
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+}
+
+th {
+    background-color: #0077cc;
+    color: white;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 1.2rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
