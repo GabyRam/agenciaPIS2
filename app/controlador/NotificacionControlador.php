@@ -1,16 +1,12 @@
 <?php
 namespace app\controlador;
 
-use app\servicios\Notificacion;
+use app\servicios\AbstraccionNotificacion;
 
-class NotificacionControlador {
-    private $tipo;
-
-    public function __construct(Notificacion $tipo) {
-        $this->tipo = $tipo;
-    }
-
-    public function notificar(string $mensaje) {
-        $this->tipo->enviar($mensaje);
+class NotificacionControlador extends AbstraccionNotificacion
+{
+    public function notificar(string $mensaje): void
+    {
+        $this->implementacion->enviar($mensaje);
     }
 }

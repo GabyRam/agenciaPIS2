@@ -1,8 +1,10 @@
 <?php
 namespace app\servicios;
 
-class NotificacionRecordatorio implements Notificacion {
-    public function enviar(string $mensaje) {
-        echo "<div class='notificacion recordatorio'>🔵 RECORDATORIO: $mensaje</div>";
+class NotificacionRecordatorio implements ImplementacionNotificacion
+{
+    public function enviar(string $mensaje): void
+    {
+        echo "<div class='notificacion recordatorio'>$mensaje</div>";
     }
 }

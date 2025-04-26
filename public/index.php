@@ -1,17 +1,18 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../app/servicios/Database.php';
-require_once __DIR__ . '/../app/servicios/Notificacion.php';
-require_once __DIR__ . '/../app/servicios/NotificacionUrgente.php';
+require_once __DIR__ . '/../app/servicios/AbstraccionNotificacion.php';
+require_once __DIR__ . '/../app/servicios/ImplementacionNotificacion.php';
 require_once __DIR__ . '/../app/servicios/NotificacionInformativa.php';
 require_once __DIR__ . '/../app/servicios/NotificacionRecordatorio.php';
+require_once __DIR__ . '/../app/servicios/NotificacionUrgente.php';
 require_once __DIR__ . '/../app/controlador/NotificacionControlador.php';
 
 use app\servicios\Database;
 use app\controlador\NotificacionControlador;
-use app\servicios\NotificacionUrgente;
 use app\servicios\NotificacionInformativa;
 use app\servicios\NotificacionRecordatorio;
+use app\servicios\NotificacionUrgente;
 
 $db = Database::getConnection();
 
@@ -31,12 +32,11 @@ ob_start();
 $notificaciones[] = ob_get_clean();
 ?>
 
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Catálogo de Autos</title>
+    <title>Prime Wheels</title>
     <link rel="stylesheet" href="styles/catalogo.css">
     <link rel="stylesheet" href="styles/notificaciones.css">
 </head>
@@ -68,29 +68,28 @@ $notificaciones[] = ob_get_clean();
         ?>
     </div>
 
-    <div class="notificaciones" id="notificaciones"></div>
+    <div class="notificaciones" id="notificaciones">
+        <script>
+            const mensajes = <?php echo json_encode($notificaciones); ?>;
 
-    <script>
-    const mensajes = <?php echo json_encode($notificaciones); ?>;
+            function mostrarNotificacion() {
+                const indice = Math.floor(Math.random() * mensajes.length);
+                const contenedor = document.getElementById('notificaciones');
 
-    function mostrarNotificacion() {
-        const indice = Math.floor(Math.random() * mensajes.length);
-        const contenedor = document.getElementById('notificaciones');
+                const div = document.createElement('div');
+                div.innerHTML = mensajes[indice];
+                contenedor.appendChild(div.firstChild);
 
-        const div = document.createElement('div');
-        div.innerHTML = mensajes[indice];
-        contenedor.appendChild(div.firstChild);
+                // Eliminar la notificación después de unos segundos
+                setTimeout(() => {
+                    const noti = contenedor.querySelector('.notificacion');
+                    if (noti) noti.remove();
+                }, 8000);
+            }
 
-        // Eliminar la notificación después de unos segundos
-        setTimeout(() => {
-            const noti = contenedor.querySelector('.notificacion');
-            if (noti) noti.remove();
-        }, 8000);
-    }
-
-    // Mostrar una notificación aleatoria cada 10 segundos
-    setInterval(mostrarNotificacion, 8000);
-</script>
-
+            // Mostrar una notificación aleatoria cada 10 segundos
+            setInterval(mostrarNotificacion, 8000);
+        </script>
+    </div>
 </body>
 </html>

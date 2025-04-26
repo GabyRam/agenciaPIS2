@@ -1,8 +1,10 @@
 <?php
 namespace app\servicios;
 
-class NotificacionUrgente implements Notificacion {
-    public function enviar(string $mensaje) {
-        echo "<div class='notificacion urgente'>🔴 URGENTE: $mensaje</div>";
+class NotificacionUrgente implements ImplementacionNotificacion
+{
+    public function enviar(string $mensaje): void
+    {
+        echo "<div class='notificacion urgente'>$mensaje</div>";
     }
 }
