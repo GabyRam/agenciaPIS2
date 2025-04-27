@@ -11,7 +11,7 @@ class InventarioReal implements IInventario {
 
     public function agregarAuto(string $modelo): void {
         // Usar sentencia preparada para seguridad
-        $sql = "INSERT INTO autos (modelo) VALUES (:modelo)";
+        $sql = "INSERT INTO auto (modelo) VALUES (:modelo)";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':modelo', $modelo, PDO::PARAM_STR);
         $stmt->execute();
@@ -20,7 +20,7 @@ class InventarioReal implements IInventario {
 
     public function actualizarAuto(int $id, string $nuevoModelo): void {
         // Verificar si el ID existe podría ser una buena mejora
-        $sql = "UPDATE autos SET modelo = :modelo WHERE id = :id";
+        $sql = "UPDATE auto SET modelo = :modelo WHERE id = :id";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':modelo', $nuevoModelo, PDO::PARAM_STR);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -36,7 +36,7 @@ class InventarioReal implements IInventario {
     }
 
     public function listarAutos(): array {
-        $sql = "SELECT id, modelo FROM autos ORDER BY id";
+        $sql = "SELECT id_auto, modelo FROM auto ORDER BY id_auto";
         $stmt = $this->db->query($sql); // query() es seguro aquí porque no hay input del usuario
         return $stmt->fetchAll(); // Devuelve un array asociativo
     }

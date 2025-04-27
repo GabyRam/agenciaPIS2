@@ -167,7 +167,7 @@ $viewAction = $_GET['action'] ?? ($loggedIn ? 'view' : 'login'); // Vista por de
                         <tbody>
                             <?php foreach ($autos as $auto): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($auto['id']); ?></td>
+                                <td><?php echo htmlspecialchars($auto['id_auto']); ?></td>
                                 <td><?php echo htmlspecialchars($auto['modelo']); ?></td>
                             </tr>
                             <?php endforeach; ?>
@@ -198,8 +198,8 @@ $viewAction = $_GET['action'] ?? ($loggedIn ? 'view' : 'login'); // Vista por de
                         <select name="id" id="id" required>
                              <option value="">-- Seleccione ID --</option>
                              <?php foreach ($autos as $auto): ?>
-                                <option value="<?php echo htmlspecialchars($auto['id']); ?>">
-                                    <?php echo htmlspecialchars($auto['id']) . " - " . htmlspecialchars($auto['modelo']); ?>
+                                <option value="<?php echo htmlspecialchars($auto['id_auto']); ?>">
+                                    <?php echo htmlspecialchars($auto['id_auto']) . " - " . htmlspecialchars($auto['modelo']); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
