@@ -75,9 +75,9 @@ if ($loggedIn) {
                     header("Location: index.php?action=view");
                     exit;
                 case 'update':
-                    if ($isAdmin && isset($_POST['id']) && !empty($_POST['modelo'])) {
+                    if ($isAdmin && isset($_POST['id_auto']) && !empty($_POST['modelo'])) {
                         // La salida del mensaje ahora la hace el método
-                        $proxy->actualizarAuto(intval($_POST['id']), trim($_POST['modelo']));
+                        $proxy->actualizarAuto(intval($_POST['id_auto']), trim($_POST['modelo']));
                     } elseif (!$isAdmin) {
                          $mensaje_accion = "Acción no permitida.";
                     } else {
@@ -194,8 +194,8 @@ $viewAction = $_GET['action'] ?? ($loggedIn ? 'view' : 'login'); // Vista por de
                  <?php if (count($autos) > 0): ?>
                     <form action="index.php" method="POST">
                         <input type="hidden" name="action" value="update">
-                        <label for="id">ID del Auto a Modificar:</label>
-                        <select name="id" id="id" required>
+                        <label for="id_auto">ID del Auto a Modificar:</label>
+                        <select name="id_auto" id="id_auto" required>
                              <option value="">-- Seleccione ID --</option>
                              <?php foreach ($autos as $auto): ?>
                                 <option value="<?php echo htmlspecialchars($auto['id_auto']); ?>">

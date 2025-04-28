@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+# agenciaPIS2
+=======
+
+>>>>>>> ProxyPatronCasas
 # 🚗 Agencia de Autos - Proyecto Web en PHP + PostgreSQL
 
 Este proyecto es un sistema básico para gestionar una agencia de autos, desarrollado en PHP, utilizando PostgreSQL como base de datos.
@@ -74,3 +81,8 @@ Este proyecto es un sistema básico para gestionar una agencia de autos, desarro
 
 ---
 
+<<<<<<< HEAD
+=======
+¡Listo! Ahora deberías poder gestionar tu agencia de autos a través del sistema web en PHP + PostgreSQL.
+>>>>>>> 9104bea2281961b3e60dac2d1a7157663658b01f
+>>>>>>> ProxyPatronCasas

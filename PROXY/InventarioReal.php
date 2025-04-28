@@ -20,10 +20,10 @@ class InventarioReal implements IInventario {
 
     public function actualizarAuto(int $id, string $nuevoModelo): void {
         // Verificar si el ID existe podría ser una buena mejora
-        $sql = "UPDATE auto SET modelo = :modelo WHERE id = :id";
+        $sql = "UPDATE auto SET modelo = :modelo WHERE id_auto = :id_auto";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':modelo', $nuevoModelo, PDO::PARAM_STR);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':id_auto', $id, PDO::PARAM_INT);
         $rowCount = $stmt->execute(); // execute() devuelve true/false, no rowCount directamente para UPDATE en PDO pgsql
         
         // PDOStatement::rowCount() puede no ser fiable para UPDATE en PostgreSQL

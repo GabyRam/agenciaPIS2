@@ -1,5 +1,5 @@
 <?php
-class Database {
+class Database {   // ESTA CLASE ES PARA EL PATRON PROXY
     private static $pdo = null;
 
     public static function getConnection(): PDO {
