@@ -39,10 +39,30 @@ $notificaciones[] = ob_get_clean();
     <title>Prime Wheels</title>
     <link rel="stylesheet" href="styles/catalogo.css">
     <link rel="stylesheet" href="styles/notificaciones.css">
+    <style>
+        /* Estilo simple para el enlace de inventario */
+        .link-inventario {
+            display: inline-block; /* Para que el margen funcione */
+            margin-left: 20px;
+            color: white;
+            background-color: #007bff; /* Color similar al botón comprar */
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.9em;
+            vertical-align: middle; /* Alinear con el título si está al lado */
+        }
+        .link-inventario:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>🚗 Prime - Wheels</h1>
+        <h1>🚗 Prime - Wheels
+            <!-- Enlace al inventario añadido aquí -->
+            <a href="../PROXY/index.php" class="link-inventario">Gestionar Inventario</a>
+        </h1>
     </header>
 
     <div class="catalogo">

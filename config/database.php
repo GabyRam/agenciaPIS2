@@ -17,7 +17,7 @@ class Database {   // ESTA CLASE ES PARA EL PATRON PROXY
                 // Establecer el search_path para usar el esquema 'app' por defecto
                 self::$pdo->exec("SET search_path TO app");
             } catch (PDOException $e) {
-                // En una aplicación real, manejarías esto de forma más robusta (log, mensaje amigable)
+               
                 throw new PDOException($e->getMessage(), (int)$e->getCode());
             }
         }

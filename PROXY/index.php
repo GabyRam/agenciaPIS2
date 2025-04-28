@@ -4,10 +4,11 @@ session_start();
 
 // Incluir dependencias
 require_once __DIR__ . '/../config/Database.php'; // Ruta actualizada
-require_once __DIR__ . '/IInventario.php';
-require_once __DIR__ . '/InventarioReal.php';
-require_once __DIR__ . '/ProxyInventario.php';
-// Las clases UI ya no se usarán de la misma forma, las reemplazaremos por HTML directo aquí
+require_once __DIR__ . '/IInventario.php'; // <-- CORREGIDO
+require_once __DIR__ . '/InventarioReal.php'; // <-- CORREGIDO
+require_once __DIR__ . '/ProxyInventario.php'; // <-- CORREGIDO
+
+
 
 // --- Configuración ---
 $usuarios = ['admin' => '123', 'user' => '456']; // Mantener por ahora, idealmente iría a BD
