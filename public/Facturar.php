@@ -21,10 +21,10 @@ if (isset($_GET['id_auto'])) {
 
         <div class="formulario">
             <h1>🚘 Comprar Auto</h1>
-            <p>Estás a punto de comprar el auto con ID: <strong><?= $idAuto ?></strong></p>
+            <p>Estás a punto de comprar el auto con ID: <strong><?= $idpago ?></strong></p>
 
             <form action="procesar_venta.php" method="POST">
-                <input type="hidden" name="id_auto" value="<?= $idAuto ?>">
+                <input type="hidden" name="id_auto" value="<?= $idpago ?>">
                 
                 <label>Nombre del Cliente:</label>
                 <input type="text" name="cliente" required>
