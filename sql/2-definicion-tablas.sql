@@ -130,3 +130,16 @@ CREATE TABLE IF NOT EXISTS Contacto (
     ID_Carro INT REFERENCES Auto(ID_Auto)
 );
 ALTER TABLE Contacto OWNER TO agencia_admin;
+
+CREATE TABLE IF NOT EXISTS Facturas (
+    ID_Factura SERIAL PRIMARY KEY,
+    ID_Pago INT NOT NULL,
+    Cliente_Nombre VARCHAR(100) NOT NULL,
+    Cliente_RFC VARCHAR(20) NOT NULL,
+    Fecha DATE NOT NULL,
+    Monto DECIMAL(10,2) NOT NULL,
+    Tipo_Factura VARCHAR(50),
+    Creada_En TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE Facturas OWNER TO agencia_admin;
