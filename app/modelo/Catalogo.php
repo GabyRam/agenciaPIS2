@@ -36,16 +36,17 @@ class Catalogo {
     }
     
     public function listarAutos() {
-        $resultado = "Catálogo: {$this->nombre}\n";
+        $resultado = "Catálogo: {$this->nombre}<br>";
         if (empty($this->listaAutos)) {
-            $resultado .= "No hay autos en el catálogo";
+            $resultado .= "No hay autos en el catálogo<br>";
         } else {
             foreach ($this->listaAutos as $indice => $auto) {
-                $resultado .= ($indice + 1) . ". " . $auto->mostrar() . "\n";
+                $resultado .= ($indice + 1) . ". " . $auto->mostrar() . "<br><br>";
             }
         }
         return $resultado;
     }
+    
     
     public function getAuto($tipo) {
         foreach ($this->listaAutos as $auto) {

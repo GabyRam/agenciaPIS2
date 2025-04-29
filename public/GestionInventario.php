@@ -22,7 +22,9 @@ $mensaje_accion = '';
 
 // --- Conexión a BD (sin cambios, usa el Database.php de config) ---
 try {
-    $db = \Database::getConnection(); // Usar '\' si Database no tiene namespace
+    $db = \Database::getConnection();
+    $db->exec("SET search_path TO app;");
+
 } catch (PDOException $e) {
     die("Error de conexión a la base de datos: " . $e->getMessage());
 }
@@ -57,11 +59,9 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
 
 // --- Instanciar Proxy si está logueado ---
 if ($loggedIn) {
-    // --- USAR NOMBRES COMPLETOS DE CLASE CON NAMESPACE ---
     $inventarioReal = new \app\servicios\InventarioReal($db);
     $proxy = new \app\servicios\ProxyInventario($inventarioReal, $isAdmin);
 
-    // --- Manejo de Acciones POST (sin cambios en la lógica interna) ---
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $redirectAction = 'view'; // Acción por defecto para redirigir
         try {
@@ -88,7 +88,6 @@ if ($loggedIn) {
                      // Redirigir a la vista principal después de la acción POST
                     header("Location: index.php?route=inventario&action=" . $redirectAction); // Redirige a sí mismo
                     exit;
-                // Añadir caso 'delete' si existe
             }
         } catch (\RuntimeException | \Exception $e) { // Capturar excepciones lanzadas por el proxy/servicio
             $errorParam = urlencode("Error: " . $e->getMessage());
@@ -98,10 +97,8 @@ if ($loggedIn) {
     }
 }
 
-// --- Determinar qué vista mostrar (GET) (sin cambios) ---
 $viewAction = $_GET['action'] ?? ($loggedIn ? 'view' : 'login');
 
-// --- HTML (sin cambios estructurales) ---
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -109,25 +106,7 @@ $viewAction = $_GET['action'] ?? ($loggedIn ? 'view' : 'login');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agencia de Autos - Inventario</title>
-    <style>
-        body { font-family: sans-serif; margin: 20px; }
-        nav { background-color: #f2f2f2; padding: 10px; margin-bottom: 20px; }
-        nav a { margin-right: 15px; text-decoration: none; color: #333; }
-        nav a:hover { text-decoration: underline; }
-        .container { max-width: 800px; margin: auto; }
-        .error { color: red; }
-        .mensaje { color: green; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        form { margin-top: 20px; padding: 15px; border: 1px solid #ccc; background-color: #f9f9f9;}
-        label { display: block; margin-bottom: 5px; }
-        input[type="text"], input[type="password"], input[type="number"] { width: calc(100% - 22px); padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; }
-        button { padding: 10px 15px; background-color: #5cb85c; color: white; border: none; cursor: pointer; }
-        button:hover { background-color: #4cae4c; }
-        .logout-btn { background-color: #d9534f; float: right;}
-        .logout-btn:hover { background-color: #c9302c; }
-    </style>
+    <link rel="stylesheet" href="styles/inventario.css">
 </head>
 <body>
     <div class="container">
@@ -135,7 +114,7 @@ $viewAction = $_GET['action'] ?? ($loggedIn ? 'view' : 'login');
 
         <?php if ($loggedIn): ?>
             <nav>
-                <span>Bienvenido, <?php echo htmlspecialchars($_SESSION['username']); ?>!</span>
+                <span>Bienvenido, <?php echo htmlspecialchars($_SESSION['username']); ?>!</span><br><br>
                 <a href="index.php?route=inventario&action=view">Ver Inventario</a>
                 <?php if ($isAdmin): ?>
                     <a href="index.php?route=inventario&action=show_register">Registrar Auto</a>
@@ -230,6 +209,7 @@ $viewAction = $_GET['action'] ?? ($loggedIn ? 'view' : 'login');
                 <button type="submit">Entrar</button>
             </form>
             <p>Usuarios de prueba: admin (pass: 123), user (pass: 456)</p>
+            <a href="index.php">⬅️ Volver al catálogo</a>
         <?php endif; ?>
 
     </div>

@@ -1,0 +1,32 @@
+#catalogo {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    background-color: #f2f2f2;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+#catalogo h2 {
+    font-size: 2rem;
+    color: #004080;
+    margin-bottom: 15px;
+}
+
+.catalogo-lista {
+    margin: 0 auto;
+    max-width: 800px;
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
+    overflow-x: auto;
+    text-align: left;
+}
+
+.catalogo-lista pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
