@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../app/servicios/Database.php';
 require_once __DIR__ . '/../app/vista/IInventario.php';
+require_once __DIR__ . '/../app/vista/generar_factura.php';
 require_once __DIR__ . '/../app/servicios/InventarioReal.php';
 require_once __DIR__ . '/../app/servicios/ProxyInventario.php';
 require_once __DIR__ . '/../app/servicios/AbstraccionNotificacion.php';
@@ -10,13 +11,24 @@ require_once __DIR__ . '/../app/servicios/ImplementacionNotificacion.php';
 require_once __DIR__ . '/../app/servicios/NotificacionInformativa.php';
 require_once __DIR__ . '/../app/servicios/NotificacionRecordatorio.php';
 require_once __DIR__ . '/../app/servicios/NotificacionUrgente.php';
+require_once __DIR__ . '/../app/servicios/FabricaAbstractaFactura.php';
+require_once __DIR__ . '/../app/servicios/FabricaFacturaCartaVehicular.php';
+require_once __DIR__ . '/../app/servicios/FabricaFacturaOrdinaria.php';
+require_once __DIR__ . '/../app/servicios/FabricaFacturaRecapitulativa.php';
 require_once __DIR__ . '/../app/controlador/NotificacionControlador.php';
+require_once __DIR__ . '/../app/controlador/FacturaController.php';
+
+// Requiere las clases de modelo para el catálogo de objetos
 require_once __DIR__ . '/../app/modelo/Catalogo.php';
 require_once __DIR__ . '/../app/modelo/Hibrido.php';
 require_once __DIR__ . '/../app/modelo/Camioneta.php';
 require_once __DIR__ . '/../app/modelo/Deportivo.php';
 require_once __DIR__ . '/../app/modelo/Electrico.php';
 require_once __DIR__ . '/../app/modelo/Gerente.php';
+require_once __DIR__ . '/../app/modelo/Factura.php';
+require_once __DIR__ . '/../app/modelo/FacturaCartaVehicular.php';
+require_once __DIR__ . '/../app/modelo/FacturaOrdinaria.php';
+require_once __DIR__ . '/../app/modelo/FacturaRecapitulativa.php';
 
 use app\servicios\Database;
 use app\controlador\NotificacionControlador;
@@ -29,7 +41,16 @@ use app\modelo\Camioneta;
 use app\modelo\Deportivo;
 use app\modelo\Electrico;
 use app\modelo\Gerente;
+<<<<<<< HEAD
 
+=======
+use app/modelo/Factura;
+use app/modelo/FacturaCartaVehicular;
+use app/modelo/FacturaOrdinaria;
+use app/modelo/FacturaRecapitulativa;
+    
+// Iniciar sesión globalmente
+>>>>>>> 78a5f8a5431f0c5744a0004d019b4e29a92f09d2
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
