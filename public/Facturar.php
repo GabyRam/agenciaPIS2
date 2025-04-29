@@ -23,7 +23,7 @@ if (isset($_GET['id_auto'])) {
             <h1>🚘 Comprar Auto</h1>
             <p>Estás a punto de comprar el auto con ID: <strong><?= $idAuto ?></strong></p>
 
-            <form action="procesar_venta.php" method="POST">
+            <form action="comprar.php" method="POST">
                 <input type="hidden" name="id_auto" value="<?= $idAuto ?>">
                 
                 <label>Nombre del Cliente:</label>
