@@ -54,6 +54,6 @@ if (isset($_GET['id_auto'])) {
 
     <?php
 } else {
-    echo "<p>❌ No se seleccionó ningún auto.</p>";
+    echo "<p>❌ No se seleccionó ningún pago.</p>";
     echo "<a href='index.php'>Volver al catálogo</a>";
 }
