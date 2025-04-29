@@ -5,6 +5,7 @@ require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../app/servicios/Database.php'; // ¿Usa PDO o pg_connect?
 // Incluir clases usadas por GestionInventario (si no hay autoloader)
 require_once __DIR__ . '/../app/vista/IInventario.php';
+require_once __DIR__ . '/../app/vista/generar_factura.php';
 require_once __DIR__ . '/../app/servicios/InventarioReal.php';
 require_once __DIR__ . '/../app/servicios/ProxyInventario.php';
 require_once __DIR__ . '/../app/servicios/AbstraccionNotificacion.php';
@@ -12,7 +13,12 @@ require_once __DIR__ . '/../app/servicios/ImplementacionNotificacion.php';
 require_once __DIR__ . '/../app/servicios/NotificacionInformativa.php';
 require_once __DIR__ . '/../app/servicios/NotificacionRecordatorio.php';
 require_once __DIR__ . '/../app/servicios/NotificacionUrgente.php';
+require_once __DIR__ . '/../app/servicios/FabricaAbstractaFactura.php';
+require_once __DIR__ . '/../app/servicios/FabricaFacturaCartaVehicular.php';
+require_once __DIR__ . '/../app/servicios/FabricaFacturaOrdinaria.php';
+require_once __DIR__ . '/../app/servicios/FabricaFacturaRecapitulativa.php';
 require_once __DIR__ . '/../app/controlador/NotificacionControlador.php';
+require_once __DIR__ . '/../app/controlador/FacturaController.php'
 
 // Requiere las clases de modelo para el catálogo de objetos
 require_once __DIR__ . '/../app/modelo/Catalogo.php';
@@ -21,6 +27,10 @@ require_once __DIR__ . '/../app/modelo/Camioneta.php';
 require_once __DIR__ . '/../app/modelo/Deportivo.php';
 require_once __DIR__ . '/../app/modelo/Electrico.php';
 require_once __DIR__ . '/../app/modelo/Gerente.php';
+require_once __DIR__ . '/../app/modelo/Factura.php';
+require_once __DIR__ . '/../app/modelo/FacturaCartaVehicular.php';
+require_once __DIR__ . '/../app/modelo/FacturaOrdinaria.php';
+require_once __DIR__ . '/../app/modelo/FacturaRecapitulativa.php';
 
 // --- USAR CLASES ---
 use app\servicios\Database; // Asegúrate que sea la clase correcta (PDO o pg_connect)
@@ -34,7 +44,11 @@ use app\modelo\Camioneta;
 use app\modelo\Deportivo;
 use app\modelo\Electrico;
 use app\modelo\Gerente;
-
+use app/modelo/Factura;
+use app/modelo/FacturaCartaVehicular;
+use app/modelo/FacturaOrdinaria;
+use app/modelo/FacturaRecapitulativa;
+    
 // Iniciar sesión globalmente
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
