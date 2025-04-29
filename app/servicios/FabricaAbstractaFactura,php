@@ -1,1 +1,6 @@
+<?php
 
+abstract class FabricaAbstractaFactura {
+
+    abstract public function crearFactura(...$params);
+}
