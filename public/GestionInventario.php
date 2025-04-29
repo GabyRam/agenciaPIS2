@@ -5,11 +5,10 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // --- AJUSTAR RUTAS REQUIRE_ONCE ---
-require_once __DIR__ . '/../config/Database.php'; // Ruta a tu Database PDO
-require_once __DIR__ . '/../app/vista/IInventario.php'; // Nueva ruta interfaz
-require_once __DIR__ . '/../app/servicios/InventarioReal.php'; // Nueva ruta clase real
-require_once __DIR__ . '/../app/servicios/ProxyInventario.php'; // Nueva ruta clase proxy
-// require_once __DIR__ . '/../app/servicios/FuncionesInventario.php'; // Nueva ruta si usas FuncionesInventario
+require_once __DIR__ . '/../config/Database.php'; // Sube a agenciaPIS2, entra a config
+require_once __DIR__ . '/../app/vista/IInventario.php'; // Sube a agenciaPIS2, entra a app/vista
+require_once __DIR__ . '/../app/servicios/InventarioReal.php'; // Sube a agenciaPIS2, entra a app/servicios
+require_once __DIR__ . '/../app/servicios/ProxyInventario.php'; // Sube a agenciaPIS2, entra a app/servicios
 
 // --- AÑADIR 'use' PARA CLASES GLOBALES ---
 // use PDOException; // Para el try-catch de la conexión
@@ -37,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $_SESSION['username'] = $user;
         $_SESSION['isAdmin'] = ($user === 'admin');
         // Redirigir para evitar reenvío de formulario
-        header("Location: index.php");
+        header("Location: index.php?route=inventario");
         exit;
     } else {
         $error_login = "Usuario o contraseña incorrectos.";
@@ -48,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
     session_unset();
     session_destroy();
-    header("Location: index.php"); // Por ahora, redirige a sí mismo
+    header("Location: index.php?route=inventario"); // Por ahora, redirige a sí mismo
     exit;
 }
 
@@ -64,6 +63,7 @@ if ($loggedIn) {
 
     // --- Manejo de Acciones POST (sin cambios en la lógica interna) ---
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+        $redirectAction = 'view'; // Acción por defecto para redirigir
         try {
             switch ($_POST['action']) {
                 case 'register':
@@ -75,7 +75,7 @@ if ($loggedIn) {
                          $mensaje_accion = "El modelo no puede estar vacío.";
                     }
                     // Redirigir a la vista principal después de la acción POST
-                    header("Location: index.php?action=view"); // Redirige a sí mismo
+                    header("Location: index.php?route=inventario&action=" . $redirectAction); // Redirige a sí mismo
                     exit;
                 case 'update':
                      if ($isAdmin && isset($_POST['id_auto']) && !empty($_POST['modelo'])) {
@@ -86,14 +86,14 @@ if ($loggedIn) {
                          $mensaje_accion = "Datos incompletos para actualizar.";
                     }
                      // Redirigir a la vista principal después de la acción POST
-                    header("Location: index.php?action=view"); // Redirige a sí mismo
+                    header("Location: index.php?route=inventario&action=" . $redirectAction); // Redirige a sí mismo
                     exit;
                 // Añadir caso 'delete' si existe
             }
-        } catch (\RuntimeException $e) { // Capturar excepciones lanzadas por el proxy/servicio
-            $mensaje_accion = "Error: " . $e->getMessage(); // Mostrar error
-        } catch (\Exception $e) { // Capturar otros errores inesperados
-            $mensaje_accion = "Error inesperado: " . $e->getMessage();
+        } catch (\RuntimeException | \Exception $e) { // Capturar excepciones lanzadas por el proxy/servicio
+            $errorParam = urlencode("Error: " . $e->getMessage());
+            header("Location: index.php?route=inventario&action=" . $redirectAction . "&error=" . $errorParam); // Apunta a index.php
+            exit;
         }
     }
 }
@@ -136,12 +136,12 @@ $viewAction = $_GET['action'] ?? ($loggedIn ? 'view' : 'login');
         <?php if ($loggedIn): ?>
             <nav>
                 <span>Bienvenido, <?php echo htmlspecialchars($_SESSION['username']); ?>!</span>
-                <a href="index.php?action=view">Ver Inventario</a>
+                <a href="index.php?route=inventario&action=view">Ver Inventario</a>
                 <?php if ($isAdmin): ?>
-                    <a href="index.php?action=show_register">Registrar Auto</a>
-                    <a href="index.php?action=show_update">Actualizar Auto</a>
+                    <a href="index.php?route=inventario&action=show_register">Registrar Auto</a>
+                    <a href="index.php?route=inventario&action=show_update">Actualizar Auto</a>
                 <?php endif; ?>
-                <a href="index.php?action=logout" class="logout-btn">Salir</a>
+                <a href="index.php?route=inventario&action=logout" class="logout-btn">Salir</a>
             </nav>
 
              <?php if (!empty($mensaje_accion)): ?>
@@ -182,7 +182,7 @@ $viewAction = $_GET['action'] ?? ($loggedIn ? 'view' : 'login');
 
             <?php if ($isAdmin && $proxy && $viewAction === 'show_register'): ?>
                 <h2>Registrar Nuevo Auto</h2>
-                <form action="index.php" method="POST">
+                <form action="index.php?route=inventario" method="POST">
                     <input type="hidden" name="action" value="register">
                     <label for="modelo">Modelo del Auto:</label>
                     <input type="text" id="modelo" name="modelo" required>
@@ -194,7 +194,7 @@ $viewAction = $_GET['action'] ?? ($loggedIn ? 'view' : 'login');
                 <h2>Actualizar Auto Existente</h2>
                  <?php $autos = $proxy->listarAutos(); ?>
                  <?php if (count($autos) > 0): ?>
-                    <form action="index.php" method="POST">
+                    <form action="index.php?route=inventario" method="POST">
                         <input type="hidden" name="action" value="update">
                         <label for="id_auto">ID del Auto a Modificar:</label>
                         <select name="id_auto" id="id_auto" required>
@@ -221,7 +221,7 @@ $viewAction = $_GET['action'] ?? ($loggedIn ? 'view' : 'login');
             <?php if ($error_login): ?>
                 <p class="error"><?php echo $error_login; ?></p>
             <?php endif; ?>
-            <form action="index.php" method="POST">
+            <form action="index.php?route=inventario" method="POST">
                 <input type="hidden" name="action" value="login">
                 <label for="username">Usuario:</label>
                 <input type="text" id="username" name="username" required>

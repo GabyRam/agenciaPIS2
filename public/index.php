@@ -1,6 +1,12 @@
 <?php
+// --- INCLUIR CLASES NECESARIAS ---
 require_once __DIR__ . '/../config/config.php';
-require_once __DIR__ . '/../app/servicios/Database.php';
+// ¡IMPORTANTE! Decide qué Database usar.
+require_once __DIR__ . '/../app/servicios/Database.php'; // ¿Usa PDO o pg_connect?
+// Incluir clases usadas por GestionInventario (si no hay autoloader)
+require_once __DIR__ . '/../app/vista/IInventario.php';
+require_once __DIR__ . '/../app/servicios/InventarioReal.php';
+require_once __DIR__ . '/../app/servicios/ProxyInventario.php';
 require_once __DIR__ . '/../app/servicios/AbstraccionNotificacion.php';
 require_once __DIR__ . '/../app/servicios/ImplementacionNotificacion.php';
 require_once __DIR__ . '/../app/servicios/NotificacionInformativa.php';
@@ -16,7 +22,8 @@ require_once __DIR__ . '/../app/modelo/Deportivo.php';
 require_once __DIR__ . '/../app/modelo/Electrico.php';
 require_once __DIR__ . '/../app/modelo/Gerente.php';
 
-use app\servicios\Database;
+// --- USAR CLASES ---
+use app\servicios\Database; // Asegúrate que sea la clase correcta (PDO o pg_connect)
 use app\controlador\NotificacionControlador;
 use app\servicios\NotificacionInformativa;
 use app\servicios\NotificacionRecordatorio;
@@ -28,132 +35,159 @@ use app\modelo\Deportivo;
 use app\modelo\Electrico;
 use app\modelo\Gerente;
 
-// Conexión a la base de datos
-$db = Database::getConnection();
-// pg_query($db, "SET search_path TO app");
+// Iniciar sesión globalmente
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-// Captura de notificaciones
-$notificaciones = [];
+// --- Router Básico ---
+$route = $_GET['route'] ?? 'catalogo';
 
-ob_start();
-(new NotificacionControlador(new NotificacionUrgente()))->notificar("¡Atención inmediata requerida!");
-$notificaciones[] = ob_get_clean();
+try {
+    switch ($route) {
+        case 'inventario':
+            // --- Incluye el manejador desde la carpeta public ---
+            require __DIR__ . '/GestionInventario.php'; // <-- AJUSTADO
+            break; // Termina la ejecución aquí
 
-ob_start();
-(new NotificacionControlador(new NotificacionInformativa()))->notificar("Hoy se actualiza el sistema.");
-$notificaciones[] = ob_get_clean();
+        case 'catalogo':
+        default:
+            // --- Lógica actual para mostrar catálogo y notificaciones ---
+            $db = Database::getConnection(); // ¿PDO o pg_connect?
+            // pg_query($db, "SET search_path TO app");
 
-ob_start();
-(new NotificacionControlador(new NotificacionRecordatorio()))->notificar("Envía tu reporte semanal.");
-$notificaciones[] = ob_get_clean();
+            // Captura de notificaciones
+            $notificaciones = [];
 
-// Preparar catálogo de objetos PHP
-$catalogo = new Catalogo("Autos 2025");
-$catalogo->agregarAuto(new Hibrido("Toyota", "Prius", 30000));
-$catalogo->agregarAuto(new Camioneta("Ford", "Ranger", 45000));
-$catalogo->agregarAuto(new Deportivo("Ferrari", "F8", 250000));
-$catalogo->agregarAuto(new Electrico("Tesla", "Model 3", 60000));
-$gerente = new Gerente("Juan Pérez", "juan@autos.com");
-?>
+            ob_start();
+            (new NotificacionControlador(new NotificacionUrgente()))->notificar("¡Atención inmediata requerida!");
+            $notificaciones[] = ob_get_clean();
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Prime Wheels</title>
-    <link rel="stylesheet" href="styles/catalogo.css">
-    <link rel="stylesheet" href="styles/notificaciones.css">
-    <style>
-        .menu {
-            margin: 20px;
-            text-align: center;
-        }
-        .menu button {
-            margin: 0 10px;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        #catalogo p {
-            margin: 5px 0;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>🚗 Prime - Wheels
-            <!-- Enlace al inventario añadido aquí -->
-            <a href="../PROXY/index.php" class="link-inventario">Gestionar Inventario</a>
-        </h1>
-    </header>
+            ob_start();
+            (new NotificacionControlador(new NotificacionInformativa()))->notificar("Hoy se actualiza el sistema.");
+            $notificaciones[] = ob_get_clean();
 
-    <div class="menu">
-        <button onclick="mostrar('inventario')">Inventario</button>
-        <button onclick="mostrar('catalogo')">Catálogo</button>
-    </div>
+            ob_start();
+            (new NotificacionControlador(new NotificacionRecordatorio()))->notificar("Envía tu reporte semanal.");
+            $notificaciones[] = ob_get_clean();
 
-    <!-- Inventario desde la base de datos -->
-    <div id="inventario" style="display: block;">
-        <div class="catalogo">
-            <?php
-            $result = pg_query($db, "SELECT * FROM Auto WHERE Disponibilidad = true");
-            while ($row = pg_fetch_assoc($result)) {
-                echo '
-                <div class="card">
-                    <img src="img/default-car.png" alt="Auto disponible">
-                    <div class="info">
-                        <h2>Año ' . htmlspecialchars($row['anio']) . '</h2>
-                        <p><strong>Costo:</strong> $' . number_format($row['costo'], 2) . '</p>
-                        <p><strong>Capacidad:</strong> ' . htmlspecialchars($row['capacidad']) . ' personas</p>
-                        <p><strong>Cilindros:</strong> ' . htmlspecialchars($row['cilindros']) . '</p>
-                        <p><strong>Apartado:</strong> ' . ($row['apartado'] ? 'Sí' : 'No') . '</p>
-                        <form action="comprar.php" method="GET">
-                            <input type="hidden" name="id_auto" value="' . htmlspecialchars($row['id_auto']) . '">
-                            <button type="submit" class="btn-comprar">Comprar</button>
-                        </form>
-                    </div>
-                </div>';
-            }
+            // Preparar catálogo de objetos PHP
+            $catalogo = new Catalogo("Autos 2025");
+            $catalogo->agregarAuto(new Hibrido("Toyota", "Prius", 30000));
+            $catalogo->agregarAuto(new Camioneta("Ford", "Ranger", 45000));
+            $catalogo->agregarAuto(new Deportivo("Ferrari", "F8", 250000));
+            $catalogo->agregarAuto(new Electrico("Tesla", "Model 3", 60000));
+            $gerente = new Gerente("Juan Pérez", "juan@autos.com");
+
+            // --- HTML del Catálogo ---
             ?>
-        </div>
-    </div>
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <meta charset="UTF-8">
+                <title>Prime Wheels</title>
+                <link rel="stylesheet" href="styles/catalogo.css">
+                <link rel="stylesheet" href="styles/notificaciones.css">
+                <style>
+                    .menu {
+                        margin: 20px;
+                        text-align: center;
+                    }
+                    .menu button {
+                        margin: 0 10px;
+                        padding: 10px 20px;
+                        font-size: 16px;
+                        cursor: pointer;
+                    }
+                    #catalogo p {
+                        margin: 5px 0;
+                    }
+                    .menu a.button { /* Estilo para enlace como botón */
+                        /* ... (estilos del enlace/botón) ... */
+                    }
+                </style>
+            </head>
+            <body>
+                <header>
+                    <h1>🚗 Prime - Wheels</h1>
+                </header>
 
-    <!-- Catálogo desde objetos PHP -->
-    <div id="catalogo" style="display: none; text-align: center;">
-        <h2>Catálogo 2025</h2>
-        <div class="catalogo-lista">
-            <pre><?php echo htmlspecialchars($gerente->consultarCatalogo($catalogo)); ?></pre>
-        </div>
-    </div>
+                <div class="menu">
+                    <!-- Enlace para ir al inventario -->
+                    <a href="index.php?route=inventario" class="button">Gestionar Inventario</a>
+                    <button onclick="mostrar('catalogo')">Ver Catálogo Objetos</button>
+                    <button onclick="mostrar('inventario_db')">Ver Inventario BD</button>
+                </div>
 
-    <!-- Notificaciones -->
-    <div class="notificaciones" id="notificaciones">
-        <script>
-            const mensajes = <?php echo json_encode($notificaciones); ?>;
+                <!-- Inventario desde la base de datos -->
+                <div id="inventario" style="display: block;">
+                    <div class="catalogo">
+                        <?php
+                        $result = pg_query($db, "SELECT * FROM Auto WHERE Disponibilidad = true");
+                        while ($row = pg_fetch_assoc($result)) {
+                            echo '
+                            <div class="card">
+                                <img src="img/default-car.png" alt="Auto disponible">
+                                <div class="info">
+                                    <h2>Año ' . htmlspecialchars($row['anio']) . '</h2>
+                                    <p><strong>Costo:</strong> $' . number_format($row['costo'], 2) . '</p>
+                                    <p><strong>Capacidad:</strong> ' . htmlspecialchars($row['capacidad']) . ' personas</p>
+                                    <p><strong>Cilindros:</strong> ' . htmlspecialchars($row['cilindros']) . '</p>
+                                    <p><strong>Apartado:</strong> ' . ($row['apartado'] ? 'Sí' : 'No') . '</p>
+                                    <form action="comprar.php" method="GET">
+                                        <input type="hidden" name="id_auto" value="' . htmlspecialchars($row['id_auto']) . '">
+                                        <button type="submit" class="btn-comprar">Comprar</button>
+                                    </form>
+                                </div>
+                            </div>';
+                        }
+                        ?>
+                    </div>
+                </div>
 
-            function mostrarNotificacion() {
-                const indice = Math.floor(Math.random() * mensajes.length);
-                const contenedor = document.getElementById('notificaciones');
+                <!-- Catálogo desde objetos PHP -->
+                <div id="catalogo" style="display: none; text-align: center;">
+                    <h2>Catálogo 2025</h2>
+                    <div class="catalogo-lista">
+                        <pre><?php echo htmlspecialchars($gerente->consultarCatalogo($catalogo)); ?></pre>
+                    </div>
+                </div>
 
-                const div = document.createElement('div');
-                div.innerHTML = mensajes[indice];
-                contenedor.appendChild(div.firstChild);
+                <!-- Notificaciones -->
+                <div class="notificaciones" id="notificaciones">
+                    <script>
+                        const mensajes = <?php echo json_encode($notificaciones); ?>;
 
-                // Eliminar la notificación después de unos segundos
-                setTimeout(() => {
-                    const noti = contenedor.querySelector('.notificacion');
-                    if (noti) noti.remove();
-                }, 8000);
-            }
+                        function mostrarNotificacion() {
+                            const indice = Math.floor(Math.random() * mensajes.length);
+                            const contenedor = document.getElementById('notificaciones');
 
-            setInterval(mostrarNotificacion, 8000);
+                            const div = document.createElement('div');
+                            div.innerHTML = mensajes[indice];
+                            contenedor.appendChild(div.firstChild);
 
-            // Mostrar y ocultar secciones
-            function mostrar(seccion) {
-                document.getElementById('inventario').style.display = (seccion === 'inventario') ? 'block' : 'none';
-                document.getElementById('catalogo').style.display = (seccion === 'catalogo') ? 'block' : 'none';
-            }
-        </script>
-    </div>
-</body>
-</html>
+                            // Eliminar la notificación después de unos segundos
+                            setTimeout(() => {
+                                const noti = contenedor.querySelector('.notificacion');
+                                if (noti) noti.remove();
+                            }, 8000);
+                        }
+
+                        setInterval(mostrarNotificacion, 8000);
+
+                        // Mostrar y ocultar secciones
+                        function mostrar(seccion) {
+                            document.getElementById('inventario').style.display = (seccion === 'inventario') ? 'block' : 'none';
+                            document.getElementById('catalogo').style.display = (seccion === 'catalogo') ? 'block' : 'none';
+                        }
+                    </script>
+                </div>
+            </body>
+            </html>
+            <?php
+            break; // Fin del case 'catalogo'
+    }
+} catch (\Throwable $e) { // Captura errores generales
+    // ... (manejo de errores) ...
+}
+?>
