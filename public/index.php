@@ -41,16 +41,12 @@ use app\modelo\Camioneta;
 use app\modelo\Deportivo;
 use app\modelo\Electrico;
 use app\modelo\Gerente;
-<<<<<<< HEAD
-
-=======
 use app/modelo/Factura;
 use app/modelo/FacturaCartaVehicular;
 use app/modelo/FacturaOrdinaria;
 use app/modelo/FacturaRecapitulativa;
     
 // Iniciar sesión globalmente
->>>>>>> 78a5f8a5431f0c5744a0004d019b4e29a92f09d2
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
