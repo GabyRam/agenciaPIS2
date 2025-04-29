@@ -2,10 +2,22 @@
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../app/servicios/Database.php';
 
+// Incluir las clases del sistema de pagos
+require_once __DIR__ . '/../app/controlador/PagoController.php';
+require_once __DIR__ . '/../app/modelo/Pago_Credito.php';
+require_once __DIR__ . '/../app/modelo/Pago_Contado.php';
+require_once __DIR__ . '/../app/modelo/Pago_Paypal_Adapter.php';
+require_once __DIR__ . '/../app/modelo/Cliente.php';
+
 use app\servicios\Database;
+use app\controlador\PagoController;
+use app\modelo\Cliente;
 
+// Conexión
 $db = Database::getConnection();
+// pg_query($db, "SET search_path TO app");
 
+// --- FUNCIONES DE INSERCIÓN EN BD ---
 function insertarPersona($nombre, $db) {
     $query = "INSERT INTO Personas (Nombre, Apellido_Paterno) VALUES ($1, 'Desconocido') RETURNING ID_Persona";
     $result = pg_query_params($db, $query, [$nombre]);
@@ -18,10 +30,12 @@ function insertarCliente($idPersona, $db) {
 }
 
 function insertarTrabajador($idPersona, $db) {
-    $puestoDefault = 1; // Asume que existe un puesto con ID 1
-    $query = "INSERT INTO Trabajadores (ID_Persona, ID_Puesto) VALUES ($1, $2)";
-    pg_query_params($db, $query, [$idPersona, $puestoDefault]);
+    $puestoDefault = 1;
+    $query = "INSERT INTO Trabajadores (ID_Persona, ID_Puesto) VALUES ($1, $2) RETURNING ID_Trabajador";
+    $result = pg_query_params($db, $query, [$idPersona, $puestoDefault]);
+    return pg_fetch_assoc($result)['id_trabajador'];
 }
+
 
 function insertarPago($idPersona, $db) {
     $numPago = uniqid("PG");
@@ -36,31 +50,72 @@ function insertarVenta($idAuto, $idPostVenta, $idPersona, $idTrabajador, $idPago
     pg_query_params($db, $query, [$idAuto, $idPostVenta, $idPersona, $idTrabajador, $idPago]);
 }
 
-// Obtener datos del formulario
-$clienteNombre = $_POST['cliente'];
-$vendedorNombre = $_POST['vendedor'];
-$pagoMetodo = $_POST['pago'];
-$idAuto = $_POST['id_auto'];
+// --- PROCESAMIENTO ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $clienteNombre = htmlspecialchars($_POST['cliente']);
+    $vendedorNombre = htmlspecialchars($_POST['vendedor']);
+    $pagoMetodo = strtolower(trim(htmlspecialchars($_POST['pago'])));
+    $idAuto = htmlspecialchars($_POST['id_auto']);
 
-// Insertar cliente
-$idClientePersona = insertarPersona($clienteNombre, $db);
-insertarCliente($idClientePersona, $db);
+    // Insertar cliente
+    $idClientePersona = insertarPersona($clienteNombre, $db);
+    insertarCliente($idClientePersona, $db);
 
-// Insertar vendedor
-$idVendedorPersona = insertarPersona($vendedorNombre, $db);
-insertarTrabajador($idVendedorPersona, $db);
+    // Insertar vendedor
+    $idVendedorPersona = insertarPersona($vendedorNombre, $db);
+    $idTrabajador = insertarTrabajador($idVendedorPersona, $db);
 
-// Insertar pago
-$idPago = insertarPago($idClientePersona, $db);
+    // Insertar pago
+    $idPago = insertarPago($idClientePersona, $db);
 
-// Insertar venta
-$idPostVenta = null; // Por ahora no lo usamos
-insertarVenta($idAuto, $idPostVenta, $idClientePersona, $idVendedorPersona, $idPago, $db);
+    // Insertar venta
+    $idPostVenta = null;
+    insertarVenta($idAuto, $idPostVenta, $idClientePersona, $idTrabajador, $idPago, $db);
 
-// Actualizar disponibilidad del auto
-pg_query_params($db, "UPDATE Auto SET Disponibilidad = false, Apartado = true WHERE ID_Auto = $1", [$idAuto]);
+    // Actualizar auto
+    pg_query_params($db, "UPDATE Auto SET Disponibilidad = false, Apartado = true WHERE ID_Auto = $1", [$idAuto]);
 
-// Confirmación
-echo "<h2>✅ Venta registrada exitosamente</h2>";
-echo "<p><a href='index.php'>Volver al catálogo</a></p>";
+    // --- APLICAMOS PATRONES DE PAGO ---
+    $cliente = new Cliente($idClientePersona, $idClientePersona);  // Usamos ID de persona
+    $controller = new PagoController();
+
+    $resultado = $controller->realizarPago(
+        $cliente->id_cliente,
+        $cliente->id_persona,
+        $pagoMetodo,
+        [
+            'type' => 'CompraAuto',
+            'field1' => $clienteNombre,
+            'field2' => $idAuto
+        ]
+    );
+
+    // --- MOSTRAR CONFIRMACIÓN ---
+    ?>
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Compra Realizada</title>
+        <link rel="stylesheet" href="styles/comprar.css">
+    </head>
+    <body>
+        <div class="formulario">
+            <h1>✅ Compra Realizada</h1>
+            <p><strong>Cliente:</strong> <?= $clienteNombre ?></p>
+            <p><strong>Vendedor:</strong> <?= $vendedorNombre ?></p>
+            <p><strong>ID Auto:</strong> <?= $idAuto ?></p>
+            <p><strong>Método de Pago:</strong> <?= ucfirst($pagoMetodo) ?></p>
+            <hr>
+            <p><strong>Resultado:</strong> <?= $resultado ?></p>
+
+            <a href="index.php">⬅️ Volver al catálogo</a>
+            <a href="index.php">➡️ Facturar</a>
+        </div>
+    </body>
+    </html>
+    <?php
+} else {
+    echo "<p>❌ Método no permitido.</p>";
+}
 ?>

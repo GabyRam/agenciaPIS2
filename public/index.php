@@ -30,7 +30,7 @@ use app\modelo\Gerente;
 
 // Conexión a la base de datos
 $db = Database::getConnection();
-pg_query($db, "SET search_path TO app");
+// pg_query($db, "SET search_path TO app");
 
 // Captura de notificaciones
 $notificaciones = [];
@@ -96,7 +96,7 @@ $gerente = new Gerente("Juan Pérez", "juan@autos.com");
     <div id="inventario" style="display: block;">
         <div class="catalogo">
             <?php
-            $result = pg_query($db, "SELECT * FROM app.auto WHERE Disponibilidad = true");
+            $result = pg_query($db, "SELECT * FROM Auto WHERE Disponibilidad = true");
             while ($row = pg_fetch_assoc($result)) {
                 echo '
                 <div class="card">
