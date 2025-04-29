@@ -1,7 +1,10 @@
 <?php
-require_once __DIR__ . '/IInventario.php'; // Asegura que la interfaz esté cargada
+namespace app\servicios; 
+use PDO; // Importar PDO global
+use PDOException; // Importar PDOException global
+require_once __DIR__ . '/../vista/IInventario.php'; // Asegura que la interfaz esté cargada
 
-class InventarioReal implements IInventario {
+class InventarioReal implements \app\vista\IInventario {
     private $db; // Conexión PDO
 
     // El constructor ahora recibe la conexión PDO
@@ -24,10 +27,9 @@ class InventarioReal implements IInventario {
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':modelo', $nuevoModelo, PDO::PARAM_STR);
         $stmt->bindParam(':id_auto', $id, PDO::PARAM_INT);
-        $rowCount = $stmt->execute(); // execute() devuelve true/false, no rowCount directamente para UPDATE en PDO pgsql
+        $rowCount = $stmt->execute(); 
         
-        // PDOStatement::rowCount() puede no ser fiable para UPDATE en PostgreSQL
-        // Podríamos verificar si el ID existía antes o simplemente asumir que funcionó si no hubo excepción.
+
         if ($rowCount) { // O simplemente verificar que no hubo excepción
              echo "<p>Auto con ID $id actualizado a '$nuevoModelo'.</p>";
         } else {

@@ -1,31 +1,34 @@
 <?php
 // Iniciar sesión ANTES de cualquier salida HTML
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-// Incluir dependencias
-require_once __DIR__ . '/../config/Database.php'; // Ruta actualizada
-require_once __DIR__ . '/IInventario.php'; // <-- CORREGIDO
-require_once __DIR__ . '/InventarioReal.php'; // <-- CORREGIDO
-require_once __DIR__ . '/ProxyInventario.php'; // <-- CORREGIDO
+// --- AJUSTAR RUTAS REQUIRE_ONCE ---
+require_once __DIR__ . '/../config/Database.php'; // Ruta a tu Database PDO
+require_once __DIR__ . '/../app/vista/IInventario.php'; // Nueva ruta interfaz
+require_once __DIR__ . '/../app/servicios/InventarioReal.php'; // Nueva ruta clase real
+require_once __DIR__ . '/../app/servicios/ProxyInventario.php'; // Nueva ruta clase proxy
+// require_once __DIR__ . '/../app/servicios/FuncionesInventario.php'; // Nueva ruta si usas FuncionesInventario
 
+// --- AÑADIR 'use' PARA CLASES GLOBALES ---
+// use PDOException; // Para el try-catch de la conexión
 
-
-// --- Configuración ---
-$usuarios = ['admin' => '123', 'user' => '456']; // Mantener por ahora, idealmente iría a BD
+// --- Configuración (sin cambios) ---
+$usuarios = ['admin' => '123', 'user' => '456'];
 $db = null;
 $proxy = null;
 $error_login = '';
-$mensaje_accion = ''; // Para mostrar mensajes como "Auto agregado"
+$mensaje_accion = '';
 
-// --- Conexión a BD ---
+// --- Conexión a BD (sin cambios, usa el Database.php de config) ---
 try {
-    $db = Database::getConnection();
+    $db = \Database::getConnection(); // Usar '\' si Database no tiene namespace
 } catch (PDOException $e) {
-    // Mostrar error crítico y detener ejecución si no hay BD
     die("Error de conexión a la base de datos: " . $e->getMessage());
 }
 
-// --- Lógica de Login ---
+// --- Lógica de Login (sin cambios) ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'login') {
     $user = $_POST['username'] ?? '';
     $pass = $_POST['password'] ?? '';
@@ -41,66 +44,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-// --- Lógica de Logout ---
+// --- Lógica de Logout (sin cambios en la lógica, solo en la redirección si es necesario más adelante) ---
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
     session_unset();
     session_destroy();
-    header("Location: index.php");
+    header("Location: index.php"); // Por ahora, redirige a sí mismo
     exit;
 }
 
-// --- Verificar si el usuario está logueado ---
+// --- Verificar si el usuario está logueado (sin cambios) ---
 $loggedIn = $_SESSION['loggedin'] ?? false;
 $isAdmin = $_SESSION['isAdmin'] ?? false;
 
 // --- Instanciar Proxy si está logueado ---
 if ($loggedIn) {
-    $inventarioReal = new InventarioReal($db);
-    // Pasamos el rol desde la sesión
-    $proxy = new ProxyInventario($inventarioReal, $isAdmin);
+    // --- USAR NOMBRES COMPLETOS DE CLASE CON NAMESPACE ---
+    $inventarioReal = new \app\servicios\InventarioReal($db);
+    $proxy = new \app\servicios\ProxyInventario($inventarioReal, $isAdmin);
 
-    // --- Manejo de Acciones (POST para modificaciones) ---
+    // --- Manejo de Acciones POST (sin cambios en la lógica interna) ---
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         try {
             switch ($_POST['action']) {
                 case 'register':
                     if ($isAdmin && !empty($_POST['modelo'])) {
-                        // La salida del mensaje ahora la hace el método
-                        $proxy->agregarAuto(trim($_POST['modelo']));
+                        $proxy->agregarAuto(trim($_POST['modelo'])); // Llamada al proxy sin cambios
                     } elseif (!$isAdmin) {
                         $mensaje_accion = "Acción no permitida.";
                     } else {
                          $mensaje_accion = "El modelo no puede estar vacío.";
                     }
                     // Redirigir a la vista principal después de la acción POST
-                    header("Location: index.php?action=view");
+                    header("Location: index.php?action=view"); // Redirige a sí mismo
                     exit;
                 case 'update':
-                    if ($isAdmin && isset($_POST['id_auto']) && !empty($_POST['modelo'])) {
-                        // La salida del mensaje ahora la hace el método
-                        $proxy->actualizarAuto(intval($_POST['id_auto']), trim($_POST['modelo']));
+                     if ($isAdmin && isset($_POST['id_auto']) && !empty($_POST['modelo'])) {
+                        $proxy->actualizarAuto(intval($_POST['id_auto']), trim($_POST['modelo'])); // Llamada al proxy sin cambios
                     } elseif (!$isAdmin) {
                          $mensaje_accion = "Acción no permitida.";
                     } else {
-                         $mensaje_accion = "ID y modelo son requeridos para actualizar.";
+                         $mensaje_accion = "Datos incompletos para actualizar.";
                     }
                      // Redirigir a la vista principal después de la acción POST
-                    header("Location: index.php?action=view");
+                    header("Location: index.php?action=view"); // Redirige a sí mismo
                     exit;
+                // Añadir caso 'delete' si existe
             }
-        } catch (Exception $e) {
-            // Captura errores generales o de BD durante las acciones
-            $mensaje_accion = "Error al procesar la acción: " . $e->getMessage();
-            // Considera redirigir o mostrar el error de forma diferente
-             header("Location: index.php?action=view&error=" . urlencode($mensaje_accion));
-             exit;
+        } catch (\RuntimeException $e) { // Capturar excepciones lanzadas por el proxy/servicio
+            $mensaje_accion = "Error: " . $e->getMessage(); // Mostrar error
+        } catch (\Exception $e) { // Capturar otros errores inesperados
+            $mensaje_accion = "Error inesperado: " . $e->getMessage();
         }
     }
 }
 
-// --- Determinar qué vista mostrar (GET) ---
-$viewAction = $_GET['action'] ?? ($loggedIn ? 'view' : 'login'); // Vista por defecto: login si no logueado, view si logueado
+// --- Determinar qué vista mostrar (GET) (sin cambios) ---
+$viewAction = $_GET['action'] ?? ($loggedIn ? 'view' : 'login');
 
+// --- HTML (sin cambios estructurales) ---
 ?>
 <!DOCTYPE html>
 <html lang="es">
