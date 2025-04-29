@@ -41,10 +41,10 @@ use app\modelo\Camioneta;
 use app\modelo\Deportivo;
 use app\modelo\Electrico;
 use app\modelo\Gerente;
-use app/modelo/Factura;
-use app/modelo/FacturaCartaVehicular;
-use app/modelo/FacturaOrdinaria;
-use app/modelo/FacturaRecapitulativa;
+use app\modelo\Factura;
+use app\modelo\FacturaCartaVehicular;
+use app\modelo\FacturaOrdinaria;
+use app\modelo\FacturaRecapitulativa;
     
 // Iniciar sesión globalmente
 if (session_status() === PHP_SESSION_NONE) {
