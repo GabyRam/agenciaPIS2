@@ -14,6 +14,6 @@ class Pago_Contado extends Pago {
     }
 
     public function realizarPago_Contado() {
-        return "Pago realizado al Contado de tipo: {$this->type}";
+        return "<br><br>Pago realizado al Contado de tipo: {$this->type}";
     }
 }

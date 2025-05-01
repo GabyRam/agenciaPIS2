@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     insertarVenta($idAuto, $idPostVenta, $idClientePersona, $idTrabajador, $idPago, $db);
 
     // Actualizar auto
-    pg_query_params($db, "UPDATE Auto SET Disponibilidad = false, Apartado = true WHERE ID_Auto = $1", [$idAuto]);
+    pg_query_params($db, "UPDATE app.auto SET Disponibilidad = false, Apartado = true WHERE ID_Auto = $1", [$idAuto]);
 
     // --- APLICAMOS PATRONES DE PAGO ---
     $cliente = new Cliente($idClientePersona, $idClientePersona);  // Usamos ID de persona

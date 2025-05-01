@@ -13,6 +13,6 @@ class Pago_Credito extends Pago {
     }
 
     public function realizarPago_Credito() {
-        return "Pago realizado con Crédito de tipo: {$this->type}";
+        return "<br><br>Pago realizado con Crédito de tipo: {$this->type}";
     }
 }

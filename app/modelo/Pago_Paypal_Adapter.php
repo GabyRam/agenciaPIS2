@@ -21,6 +21,6 @@ class Pago_Paypal_Adapter extends Pago implements Pago_Paypal {
     }
 
     public function realizarPago_Paypal() {
-        return "Pago realizado con PayPal. Field1: {$this->field1}, Field2: {$this->field2}";
+        return "<br><br>Pago realizado con PayPal. <br> Cliente: {$this->field1}<br>Auto vendido: {$this->field2}";
     }
 }

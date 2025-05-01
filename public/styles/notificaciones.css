@@ -1,4 +1,7 @@
 .notificacion {
+    position: fixed;
+    top: 50px;
+    right: 50px;
     padding: 1rem;
     margin: 1rem;
     border-radius: 10px;
