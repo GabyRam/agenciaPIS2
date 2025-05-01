@@ -158,10 +158,10 @@ try {
                             setTimeout(() => {
                                 const noti = contenedor.querySelector('.notificacion');
                                 if (noti) noti.remove();
-                            }, 8000);
+                            }, 5000);
                         }
 
-                        setInterval(mostrarNotificacion, 8000);
+                        setInterval(mostrarNotificacion, 3000);
 
                         function mostrar(seccion) {
                             document.getElementById('inventario').style.display = (seccion === 'inventario') ? 'block' : 'none';
