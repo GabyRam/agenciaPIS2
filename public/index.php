@@ -1,36 +1,36 @@
 <?php
 // --- INCLUIR CLASES NECESARIAS ---
 require_once __DIR__ . '/../config/config.php';
-require_once __DIR__ . '/../app/servicios/Database.php';
-require_once __DIR__ . '/../app/vista/IInventario.php';
-require_once __DIR__ . '/../app/servicios/InventarioReal.php';
-require_once __DIR__ . '/../app/servicios/ProxyInventario.php';
-require_once __DIR__ . '/../app/servicios/AbstraccionNotificacion.php';
-require_once __DIR__ . '/../app/servicios/ImplementacionNotificacion.php';
-require_once __DIR__ . '/../app/servicios/NotificacionInformativa.php';
-require_once __DIR__ . '/../app/servicios/NotificacionRecordatorio.php';
-require_once __DIR__ . '/../app/servicios/NotificacionUrgente.php';
-require_once __DIR__ . '/../app/controlador/NotificacionControlador.php';
+require_once __DIR__ . '/../app/servicios/BD/Database.php';
+require_once __DIR__ . '/../app/modelo/Inventario/IInventario.php';
+require_once __DIR__ . '/../app/servicios/Usuario/Inventario/InventarioReal.php';
+require_once __DIR__ . '/../app/servicios/Usuario/Inventario/ProxyInventario.php';
+require_once __DIR__ . '/../app/servicios/Usuario/Notificaciones/AbstraccionNotificacion.php';
+require_once __DIR__ . '/../app/servicios/Usuario/Notificaciones/ImplementacionNotificacion.php';
+require_once __DIR__ . '/../app/servicios/Usuario/Notificaciones/NotificacionInformativa.php';
+require_once __DIR__ . '/../app/servicios/Usuario/Notificaciones/NotificacionRecordatorio.php';
+require_once __DIR__ . '/../app/servicios/Usuario/Notificaciones/NotificacionUrgente.php';
+require_once __DIR__ . '/../app/controlador/Notificaciones/NotificacionControlador.php';
 
 // Requiere las clases de modelo para el catálogo de objetos
-require_once __DIR__ . '/../app/modelo/Catalogo.php';
-require_once __DIR__ . '/../app/modelo/Hibrido.php';
-require_once __DIR__ . '/../app/modelo/Camioneta.php';
-require_once __DIR__ . '/../app/modelo/Deportivo.php';
-require_once __DIR__ . '/../app/modelo/Electrico.php';
-require_once __DIR__ . '/../app/modelo/Gerente.php';
+require_once __DIR__ . '/../app/modelo/Auto/Catalogo.php';
+require_once __DIR__ . '/../app/modelo/Auto/Hibrido.php';
+require_once __DIR__ . '/../app/modelo/Auto/Camioneta.php';
+require_once __DIR__ . '/../app/modelo/Auto/Deportivo.php';
+require_once __DIR__ . '/../app/modelo/Auto/Electrico.php';
+require_once __DIR__ . '/../app/modelo/Usuario/Gerente.php';
 
-use app\servicios\Database;
-use app\controlador\NotificacionControlador;
-use app\servicios\NotificacionInformativa;
-use app\servicios\NotificacionRecordatorio;
-use app\servicios\NotificacionUrgente;
-use app\modelo\Catalogo;
-use app\modelo\Hibrido;
-use app\modelo\Camioneta;
-use app\modelo\Deportivo;
-use app\modelo\Electrico;
-use app\modelo\Gerente;
+use app\servicios\BD\Database;
+use app\controlador\Notificaciones\NotificacionControlador;
+use app\servicios\Usuario\Notificaciones\NotificacionInformativa;
+use app\servicios\Usuario\Notificaciones\NotificacionRecordatorio;
+use app\servicios\Usuario\Notificaciones\NotificacionUrgente;
+use app\modelo\Auto\Catalogo;
+use app\modelo\Auto\Hibrido;
+use app\modelo\Auto\Camioneta;
+use app\modelo\Auto\Deportivo;
+use app\modelo\Auto\Electrico;
+use app\modelo\Usuario\Gerente;
 
     
 // Iniciar sesión globalmente

@@ -1,17 +1,17 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
-require_once __DIR__ . '/../app/servicios/Database.php';
+require_once __DIR__ . '/../app/servicios/BD/database.php';
 
 // Incluir las clases del sistema de pagos
-require_once __DIR__ . '/../app/controlador/PagoController.php';
-require_once __DIR__ . '/../app/modelo/Pago_Credito.php';
-require_once __DIR__ . '/../app/modelo/Pago_Contado.php';
-require_once __DIR__ . '/../app/modelo/Pago_Paypal_Adapter.php';
-require_once __DIR__ . '/../app/modelo/Cliente.php';
+require_once __DIR__ . '/../app/controlador/Pago/PagoController.php';
+require_once __DIR__ . '/../app/modelo/Pago/Pago_Credito.php';
+require_once __DIR__ . '/../app/modelo/Pago/Pago_Contado.php';
+require_once __DIR__ . '/../app/modelo/Pago/Pago_Paypal_Adapter.php';
+require_once __DIR__ . '/../app/modelo/Usuario/Cliente.php';
 
-use app\servicios\Database;
-use app\controlador\PagoController;
-use app\modelo\Cliente;
+use app\servicios\BD\Database;
+use app\controlador\Pago\PagoController;
+use app\modelo\Usuario\Cliente;
 
 // Conexión
 $db = Database::getConnection();

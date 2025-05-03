@@ -1,8 +1,8 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
-require_once __DIR__ . '/../app/servicios/Database.php';
+require_once __DIR__ . '/../app/servicios/BD/database.php';
 
-use app\servicios\Database;
+use app\servicios\BD\Database;
 
 $db = Database::getConnection();
 

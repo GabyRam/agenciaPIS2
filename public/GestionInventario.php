@@ -1,14 +1,17 @@
 <?php
+
+use app\servicios\Usuario\Inventario\InventarioReal;
+use app\servicios\Usuario\Inventario\ProxyInventario;
 // Iniciar sesión ANTES de cualquier salida HTML
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 // --- AJUSTAR RUTAS REQUIRE_ONCE ---
-require_once __DIR__ . '/../config/Database.php'; // Sube a agenciaPIS2, entra a config
-require_once __DIR__ . '/../app/vista/IInventario.php'; // Sube a agenciaPIS2, entra a app/vista
-require_once __DIR__ . '/../app/servicios/InventarioReal.php'; // Sube a agenciaPIS2, entra a app/servicios
-require_once __DIR__ . '/../app/servicios/ProxyInventario.php'; // Sube a agenciaPIS2, entra a app/servicios
+require_once __DIR__ . '/../config/database.php'; // Sube a agenciaPIS2, entra a config
+require_once __DIR__ . '/../app/modelo/Inventario/IInventario.php'; // Sube a agenciaPIS2, entra a app/vista
+require_once __DIR__ . '/../app/servicios/Usuario/Inventario/InventarioReal.php'; // Sube a agenciaPIS2, entra a app/servicios
+require_once __DIR__ . '/../app/servicios/Usuario/Inventario/ProxyInventario.php'; // Sube a agenciaPIS2, entra a app/servicios
 
 // --- AÑADIR 'use' PARA CLASES GLOBALES ---
 // use PDOException; // Para el try-catch de la conexión
@@ -59,8 +62,8 @@ $isAdmin = $_SESSION['isAdmin'] ?? false;
 
 // --- Instanciar Proxy si está logueado ---
 if ($loggedIn) {
-    $inventarioReal = new \app\servicios\InventarioReal($db);
-    $proxy = new \app\servicios\ProxyInventario($inventarioReal, $isAdmin);
+    $inventarioReal = new InventarioReal($db);
+    $proxy = new ProxyInventario($inventarioReal, $isAdmin);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $redirectAction = 'view'; // Acción por defecto para redirigir

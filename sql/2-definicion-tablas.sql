@@ -60,7 +60,8 @@ CREATE TABLE IF NOT EXISTS Auto (
     Cilindros INT,
     Disponibilidad BOOLEAN DEFAULT TRUE,
     Apartado BOOLEAN DEFAULT FALSE,
-    modelo VARCHAR(100) NOT NULL
+    modelo VARCHAR(100) NOT NULL,
+    tipo TEXT NOT NULL
 );
 ALTER TABLE Auto OWNER TO agencia_admin;
 
