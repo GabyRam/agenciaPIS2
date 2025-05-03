@@ -1,60 +1,39 @@
 <?php
 namespace app\modelo\Auto;
 
+require_once 'Hibrido.php';
+require_once 'Camioneta.php';
+require_once 'Deportivo.php';
+require_once 'Electrico.php';
+
 class Catalogo {
-    private $nombre;
-    private $listaAutos;
-    
-    public function __construct($nombre) {
-        $this->nombre = $nombre;
-        $this->listaAutos = [];
+    private $hibrido;
+    private $camioneta;
+    private $deportivo;
+    private $electrico;
+
+    public function __construct($hibrido, $camioneta, $deportivo, $electrico) {
+        $this->hibrido = $hibrido;
+        $this->camioneta = $camioneta;
+        $this->deportivo = $deportivo;
+        $this->electrico = $electrico;
     }
-    
-    public function getNombre() {
-        return $this->nombre;
-    }
-    
-    public function agregarAuto($auto) {
-        $this->listaAutos[] = $auto;
-        return true;
-    }
-    
-    public function eliminarAuto($indice) {
-        if (isset($this->listaAutos[$indice])) {
-            unset($this->listaAutos[$indice]);
-            $this->listaAutos = array_values($this->listaAutos); // Reindexar el array
-            return true;
+
+    public function mostrarAuto($tipo) {
+        switch ($tipo) {
+            case 'hibrido': return $this->hibrido->mostrar();
+            case 'camioneta': return $this->camioneta->mostrar();
+            case 'deportivo': return $this->deportivo->mostrar();
+            case 'electrico': return $this->electrico->mostrar();
+            default: return "Tipo no válido";
         }
-        return false;
     }
-    
-    public function mostrarAuto($indice) {
-        if (isset($this->listaAutos[$indice])) {
-            return $this->listaAutos[$indice]->mostrar();
-        }
-        return "Auto no encontrado";
-    }
-    
+
     public function listarAutos() {
-        $resultado = "Catálogo: {$this->nombre}<br>";
-        if (empty($this->listaAutos)) {
-            $resultado .= "No hay autos en el catálogo<br>";
-        } else {
-            foreach ($this->listaAutos as $indice => $auto) {
-                $resultado .= ($indice + 1) . ". " . $auto->mostrar() . "<br><br>";
-            }
-        }
-        return $resultado;
-    }
-    
-    
-    public function getAuto($tipo) {
-        foreach ($this->listaAutos as $auto) {
-            if (get_class($auto) === $tipo) {
-                return $auto;
-            }
-        }
-        return null;
+        return $this->hibrido->mostrar() . "<br>" .
+               $this->camioneta->mostrar() . "<br>" .
+               $this->deportivo->mostrar() . "<br>" .
+               $this->electrico->mostrar();
     }
 }
 ?>

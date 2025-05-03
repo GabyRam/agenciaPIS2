@@ -12,7 +12,6 @@ require_once __DIR__ . '/../app/servicios/Usuario/Notificaciones/NotificacionRec
 require_once __DIR__ . '/../app/servicios/Usuario/Notificaciones/NotificacionUrgente.php';
 require_once __DIR__ . '/../app/controlador/Notificaciones/NotificacionControlador.php';
 
-// Requiere las clases de modelo para el catálogo de objetos
 require_once __DIR__ . '/../app/modelo/Auto/Catalogo.php';
 require_once __DIR__ . '/../app/modelo/Auto/Hibrido.php';
 require_once __DIR__ . '/../app/modelo/Auto/Camioneta.php';
@@ -32,8 +31,7 @@ use app\modelo\Auto\Deportivo;
 use app\modelo\Auto\Electrico;
 use app\modelo\Usuario\Gerente;
 
-    
-// Iniciar sesión globalmente
+// Iniciar sesión
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -43,8 +41,8 @@ $route = $_GET['route'] ?? 'catalogo';
 try {
     switch ($route) {
         case 'inventario':
-            require __DIR__ . '/GestionInventario.php'; 
-            break; 
+            require __DIR__ . '/GestionInventario.php';
+            break;
 
         case 'catalogo':
         default:
@@ -65,13 +63,17 @@ try {
             (new NotificacionControlador(new NotificacionRecordatorio()))->notificar("Envía tu reporte semanal.");
             $notificaciones[] = ob_get_clean();
 
-            $catalogo = new Catalogo("Autos 2025");
-            $catalogo->agregarAuto(new Hibrido("Toyota", "Prius", 30000));
-            $catalogo->agregarAuto(new Camioneta("Ford", "Ranger", 45000));
-            $catalogo->agregarAuto(new Deportivo("Ferrari", "F8", 250000));
-            $catalogo->agregarAuto(new Electrico("Tesla", "Model 3", 60000));
-            $gerente = new Gerente("Juan Pérez", "juan@autos.com");
+            // Crear objetos de autos
+            $hibrido = new Hibrido("Toyota", "Prius", 30000);
+            $camioneta = new Camioneta("Ford", "Ranger", 45000);
+            $deportivo = new Deportivo("Ferrari", "F8", 250000);
+            $electrico = new Electrico("Tesla", "Model 3", 60000);
 
+            // Crear catálogo
+            $catalogo = new Catalogo($hibrido, $camioneta, $deportivo, $electrico);
+
+            // Crear gerente
+            $gerente = new Gerente("Juan Pérez", "juan@autos.com");
             ?>
             <!DOCTYPE html>
             <html lang="es">
@@ -79,8 +81,9 @@ try {
                 <meta charset="UTF-8">
                 <title>Prime Wheels</title>
                 <link rel="stylesheet" href="styles/catalogo.css">
+                <link rel="stylesheet" href="styles/catalogoVista.css">
                 <link rel="stylesheet" href="styles/notificaciones.css">
-                <link rel="stylesheet" href="styles/menu.css"> <!-- Nueva hoja para la parte de menú -->
+                <link rel="stylesheet" href="styles/menu.css">
             </head>
             <body>
                 <header>
@@ -121,14 +124,11 @@ try {
                     <h2 style="text-align: center; margin-bottom: 20px;">Catálogo 2025</h2>
                     <div class="catalogo-lista" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
                         <?php
-                        // Asumiendo que consultarCatalogo devuelve una lista de objetos o datos para crear tarjetas
-                        $catalogoHtml = $gerente->consultarCatalogo($catalogo); 
-                        echo $catalogoHtml;
+                        echo $gerente->consultarCatalogo($catalogo);
                         ?>
                     </div>
                     <a href="index.php" style="display: block; text-align: center; font-size: 18px; margin-top: 20px;">⬅️ Volver al catálogo</a>
-                    </div>
-
+                </div>
 
                 <div class="notificaciones" id="notificaciones">
                     <script>
@@ -162,6 +162,6 @@ try {
             break;
     }
 } catch (\Throwable $e) {
-    // Manejo de errores
+    echo "<p>Error en la aplicación: " . $e->getMessage() . "</p>";
 }
 ?>
