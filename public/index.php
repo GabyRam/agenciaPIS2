@@ -111,10 +111,12 @@ try {
                     <h1>P r i m e - W h e e l s</h1>
                 </header>
 
-                <div class="menu">
-                    <button onclick="location.href='index.php?route=inventario&action='" class="button">Gestionar Inventario</button>
-                    <button onclick="mostrar('catalogo')">Ver Catálogo Objetos</button>
-                </div>
+                <nav class="menu">
+                    <ul>
+                        <li><a href="#" onclick="mostrar('catalogo'); return false;">Ver Catálogo</a></li>
+                        <li><a href="index.php?route=inventario&action=gestionar">Gestionar Inventario</a></li>
+                    </ul>
+                </nav>
 
                 <div id="inventario" style="display: block;">
                     <div class="catalogo">
