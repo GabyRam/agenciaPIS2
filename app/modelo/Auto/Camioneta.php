@@ -24,7 +24,8 @@ class Camioneta {
     }
     
     public function mostrar() {
-        return "Camioneta - Marca: {$this->marca}, Modelo: {$this->modelo}, Precio: \${$this->precio}";
+        return "<strong>Camioneta<br><br>Marca:</strong> {$this->marca},<br><strong>Modelo:</strong> {$this->modelo},<br><strong>Precio:</strong> \${$this->precio}";
+
     }
 }
 ?>

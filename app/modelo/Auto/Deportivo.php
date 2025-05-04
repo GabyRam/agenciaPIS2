@@ -25,7 +25,7 @@ class Deportivo {
     }
     
     public function mostrar() {
-        return "Auto Deportivo - Marca: {$this->marca}, Modelo: {$this->modelo}, Precio: \${$this->precio}";
+        return "<strong>Deportivo<br><br>Marca:</strong> {$this->marca},<br><strong>Modelo:</strong> {$this->modelo},<br><strong>Precio:</strong> \${$this->precio}";
     }
 }
 ?>

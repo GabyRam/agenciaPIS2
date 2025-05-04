@@ -19,6 +19,18 @@ require_once __DIR__ . '/../app/modelo/Auto/Deportivo.php';
 require_once __DIR__ . '/../app/modelo/Auto/Electrico.php';
 require_once __DIR__ . '/../app/modelo/Usuario/Gerente.php';
 
+// --- FACTURAS ---
+require_once __DIR__ . '/../app/modelo/Facturas/Pago.php';
+require_once __DIR__ . '/../app/servicios/Usuario/Facturas/FabricaFactura.php';
+require_once __DIR__ . '/../app/servicios/Usuario/Facturas/FacturaAbstracta.php';
+require_once __DIR__ . '/../app/servicios/Usuario/Facturas/FabricaCompletaFacturaOrd.php';
+require_once __DIR__ . '/../app/servicios/Usuario/Facturas/FabricaCompletaFacturaCartaVehicular.php';
+require_once __DIR__ . '/../app/servicios/Usuario/Facturas/FabricaCompletaRecapitulativa.php';
+require_once __DIR__ . '/../app/servicios/Usuario/Facturas/FacturaOrdinaria.php';
+require_once __DIR__ . '/../app/servicios/Usuario/Facturas/FacturaCartaVehicular.php';
+require_once __DIR__ . '/../app/servicios/Usuario/Facturas/FacturaRecapitulativa.php';
+
+
 use app\servicios\BD\Database;
 use app\controlador\Notificaciones\NotificacionControlador;
 use app\servicios\Usuario\Notificaciones\NotificacionInformativa;
@@ -30,6 +42,11 @@ use app\modelo\Auto\Camioneta;
 use app\modelo\Auto\Deportivo;
 use app\modelo\Auto\Electrico;
 use app\modelo\Usuario\Gerente;
+use app\modelo\Facturas\Pago;
+use app\servicios\Usuario\Facturas\FabricaCompletaFacturaOrd;
+use app\servicios\Usuario\Facturas\FabricaCompletaFacturaCartaVehicular;
+use app\servicios\Usuario\Facturas\FabricaCompletaRecapitulativa;
+
 
 // Iniciar sesión
 if (session_status() === PHP_SESSION_NONE) {
@@ -65,15 +82,16 @@ try {
 
             // Crear objetos de autos
             $hibrido = new Hibrido("Toyota", "Prius", 30000);
-            $camioneta = new Camioneta("Ford", "Ranger", 45000);
-            $deportivo = new Deportivo("Ferrari", "F8", 250000);
-            $electrico = new Electrico("Tesla", "Model 3", 60000);
+            $camioneta = new Camioneta("Honda", "CRV", 45000);
+            $deportivo = new Deportivo("Ford", "Mustang", 250000);
+            $electrico = new Electrico("BYD", "Dolphin", 60000);
 
             // Crear catálogo
             $catalogo = new Catalogo($hibrido, $camioneta, $deportivo, $electrico);
 
             // Crear gerente
             $gerente = new Gerente("Juan Pérez", "juan@autos.com");
+
             ?>
             <!DOCTYPE html>
             <html lang="es">
@@ -84,6 +102,7 @@ try {
                 <link rel="stylesheet" href="styles/catalogoVista.css">
                 <link rel="stylesheet" href="styles/notificaciones.css">
                 <link rel="stylesheet" href="styles/menu.css">
+                <link rel="stylesheet" href="styles/factura.css">
             </head>
             <body>
                 <header>

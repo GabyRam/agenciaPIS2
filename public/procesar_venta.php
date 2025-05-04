@@ -13,9 +13,19 @@ use app\servicios\BD\Database;
 use app\controlador\Pago\PagoController;
 use app\modelo\Usuario\Cliente;
 
-// Conexión
+// Iniciar sesión para almacenar datos
+session_start();
+
+// Conexión a la base de datos
 $db = Database::getConnection();
-// pg_query($db, "SET search_path TO app");
+
+// Recuperar datos del auto
+function obtenerAuto($idAuto, $db) {
+    $queryAuto = "SELECT * FROM app.auto WHERE ID_Auto = $1";
+    $resultAuto = pg_query_params($db, $queryAuto, [$idAuto]);
+    return pg_fetch_assoc($resultAuto);
+}
+
 
 // --- FUNCIONES DE INSERCIÓN EN BD ---
 function insertarPersona($nombre, $db) {
@@ -52,6 +62,7 @@ function insertarVenta($idAuto, $idPostVenta, $idPersona, $idTrabajador, $idPago
 
 // --- PROCESAMIENTO ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Obtener los datos del cliente, vendedor, pago, y auto
     $clienteNombre = htmlspecialchars($_POST['cliente']);
     $vendedorNombre = htmlspecialchars($_POST['vendedor']);
     $pagoMetodo = strtolower(trim(htmlspecialchars($_POST['pago'])));
@@ -69,16 +80,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $idPago = insertarPago($idClientePersona, $db);
 
     // Insertar venta
-    $idPostVenta = null;
+    $idPostVenta = null;  // Esto debería estar correctamente definido si es necesario
     insertarVenta($idAuto, $idPostVenta, $idClientePersona, $idTrabajador, $idPago, $db);
 
-    // Actualizar auto
+    // Actualizar disponibilidad del auto en la base de datos
     pg_query_params($db, "UPDATE app.auto SET Disponibilidad = false, Apartado = true WHERE ID_Auto = $1", [$idAuto]);
+
+    // Obtener los datos del auto y almacenarlos en la sesión
+    $auto = obtenerAuto($idAuto, $db);
+    $_SESSION['auto'] = $auto;  // Guardamos los datos del auto en la sesión
 
     // --- APLICAMOS PATRONES DE PAGO ---
     $cliente = new Cliente($idClientePersona, $idClientePersona);  // Usamos ID de persona
     $controller = new PagoController();
 
+    // Realizar pago
     $resultado = $controller->realizarPago(
         $cliente->id_cliente,
         $cliente->id_persona,
@@ -110,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p><strong>Resultado:</strong> <?= $resultado ?></p>
 
             <a href="index.php">⬅️ Volver al catálogo</a>
-            <a href="index.php">➡️ Facturar</a>
+            <a href="factura.php">➡️ Facturar</a>
         </div>
     </body>
     </html>

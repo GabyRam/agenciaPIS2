@@ -25,7 +25,7 @@ class Hibrido {
     }
     
     public function mostrar() {
-        return "Auto Híbrido - Marca: {$this->marca}, Modelo: {$this->modelo}, Precio: \${$this->precio}";
+        return "<strong>Auto Híbrido<br><br>Marca:</strong> {$this->marca},<br><strong>Modelo:</strong> {$this->modelo},<br><strong>Precio:</strong> \${$this->precio}";
     }
 }
 ?>

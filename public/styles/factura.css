@@ -1,0 +1,98 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.factura-box {
+    background-color: #fff;
+    border: 2px solid #007BFF;
+    padding: 30px;
+    margin: 50px auto;
+    max-width: 600px;
+    border-radius: 15px;
+    font-size: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    color: #333;
+    text-align: center; /* Centramos el contenido */
+}
+
+.factura-box h1 {
+    font-size: 24px;
+    color: #007BFF;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.factura-box form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.factura-box label {
+    font-weight: bold;
+    color: #333;
+}
+
+.factura-box select, 
+.factura-box textarea, 
+.factura-box input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 16px;
+    color: #333;
+    transition: all 0.3s ease-in-out;
+}
+
+.factura-box textarea {
+    height: 120px;
+    resize: vertical; /* Permite ajustar el tamaño */
+}
+
+.factura-box input:focus,
+.factura-box textarea:focus,
+.factura-box select:focus {
+    border-color: #007BFF;
+    outline: none;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+}
+
+.factura-box button {
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.factura-box button:hover {
+    background-color: #0056b3;
+}
+
+.factura-box .form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.factura-box .form-footer a {
+    text-decoration: none;
+    font-size: 14px;
+    color: #007BFF;
+}
+
+.factura-box .form-footer a:hover {
+    color: #0056b3;
+}
+
+textarea {
+    height: 150px;
+}
