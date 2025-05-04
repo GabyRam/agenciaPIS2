@@ -1,0 +1,21 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+}
+
+header {
+    background: #0084ff;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 4em;
+    font-family: 'Bangers', cursive;
+    color: #fff;
+    letter-spacing: 3px;
+    text-shadow: 3px 3px 0 #000;
+}

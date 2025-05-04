@@ -97,16 +97,18 @@ try {
             <html lang="es">
             <head>
                 <meta charset="UTF-8">
-                <title>Prime Wheels</title>
+                <title>Prime - Wheels</title>
+                <link rel="stylesheet" href="styles/encabezado.css">
                 <link rel="stylesheet" href="styles/catalogo.css">
                 <link rel="stylesheet" href="styles/catalogoVista.css">
                 <link rel="stylesheet" href="styles/notificaciones.css">
                 <link rel="stylesheet" href="styles/menu.css">
                 <link rel="stylesheet" href="styles/factura.css">
+                <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
             </head>
             <body>
                 <header>
-                    <h1>🚗 Prime - Wheels</h1>
+                    <h1>P r i m e - W h e e l s</h1>
                 </header>
 
                 <div class="menu">
